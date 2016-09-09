@@ -1,0 +1,9 @@
+[package]
+name = "boxes_catching_boxes"
+version = "0.1.0"
+authors = ["Justin Hamilton <justin@jamiltron.com>"]
+
+[dependencies]
+sdl2 = "0.22"
+sdl2_image = "0.22"
+sdl2_ttf = "0.22"
