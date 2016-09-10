@@ -48,7 +48,7 @@ fn main() {
                                    0.1);
     let ttf_context = sdl2_ttf::init().unwrap();
     let font = ttf_context.load_font(Path::new("res/fonts/kenpixel_mini.ttf"), 16).unwrap();
-    let mut score_keeper = ScoreKeeper::new(font, Color::RGB(255, 255, 255), &renderer, GAME_WIDTH);
+    let mut score_keeper = ScoreKeeper::new(font, Color::RGB(050, 050, 050), &renderer, GAME_WIDTH);
 
     // font stuff
 

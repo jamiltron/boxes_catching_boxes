@@ -18,17 +18,30 @@ pub struct ScoreKeeper {
 }
 
 impl ScoreKeeper {
-    pub fn new(font: Font, text_color: Color, renderer: &Renderer, game_width: u32) -> ScoreKeeper {
-        let font_surface = font.render(format!("Score: {:06}", 0).as_str())
+    fn create_font_texture(font: &Font,
+                           text_color: Color,
+                           text: String,
+                           renderer: &Renderer)
+                           -> Texture {
+        let font_surface = font.render(text.as_str())
             .solid(text_color)
             .unwrap();
 
-        let font_texture = renderer.create_texture_from_surface(&font_surface).unwrap();
+        renderer.create_texture_from_surface(&font_surface).unwrap()
+    }
+
+    fn create_font_target(game_width: u32, font_texture: &Texture) -> Rect {
         let TextureQuery { width, height, .. } = font_texture.query();
-        let font_target = Rect::new((game_width - (width + 12)) as i32,
-                                    (height - 12) as i32,
-                                    width,
-                                    height);
+        Rect::new((game_width - (width + 12)) as i32,
+                  (height - 12) as i32,
+                  width,
+                  height)
+    }
+
+    pub fn new(font: Font, text_color: Color, renderer: &Renderer, game_width: u32) -> ScoreKeeper {
+        let text = format!("Score: {:06}", 0);
+        let font_texture = ScoreKeeper::create_font_texture(&font, text_color, text, renderer);
+        let font_target = ScoreKeeper::create_font_target(game_width, &font_texture);
 
 
         ScoreKeeper {
@@ -63,7 +76,7 @@ impl ScoreKeeper {
                                          height);
         }
 
+        renderer.set_draw_color(self.text_color);
         renderer.copy(&mut self.font_texture, None, Some(self.font_target));
-
     }
 }
