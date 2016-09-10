@@ -1,5 +1,6 @@
-extern crate sdl2;
 extern crate rand;
+extern crate sdl2;
+extern crate sdl2_ttf;
 
 mod drop;
 mod dropper;
@@ -7,13 +8,16 @@ mod entity;
 mod game_timer;
 mod hero;
 mod input_manager;
+mod score_keeper;
 
 use dropper::Dropper;
 use entity::Entity;
 use game_timer::GameTimer;
 use hero::Hero;
 use input_manager::InputManager;
+use score_keeper::ScoreKeeper;
 use sdl2::pixels::Color;
+use std::path::Path;
 
 const GAME_WIDTH: u32 = 640;
 const GAME_HEIGHT: u32 = 480;
@@ -42,6 +46,12 @@ fn main() {
                                    1000.0,
                                    Color::RGB(255, 255, 255),
                                    0.1);
+    let ttf_context = sdl2_ttf::init().unwrap();
+    let font = ttf_context.load_font(Path::new("res/fonts/kenpixel_mini.ttf"), 16).unwrap();
+    let mut score_keeper = ScoreKeeper::new(font, Color::RGB(255, 255, 255), &renderer, GAME_WIDTH);
+
+    // font stuff
+
 
     // create our game entities
     let grass = Entity::new(0,
@@ -71,7 +81,9 @@ fn main() {
         hero.update(&input_manager, game_timer.dt);
         hero.clamp(0, GAME_WIDTH as i32);
         dropper.update(game_timer.dt);
-        dropper.check_caught(hero.entity.rect);
+        let points = dropper.check_caught(hero.entity.rect);
+        score_keeper.update(points);
+
 
         // render everything
         renderer.set_draw_color(Color::RGB(101, 156, 239));
@@ -79,6 +91,7 @@ fn main() {
         dropper.render(&mut renderer);
         grass.render(&mut renderer);
         hero.render(&mut renderer);
+        score_keeper.render(&mut renderer);
         renderer.present();
     }
 }
