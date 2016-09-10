@@ -31,7 +31,7 @@ impl Dropper {
         }
     }
 
-    pub fn update(&mut self, dt: f32, catch_rect: Rect) -> () {
+    pub fn update(&mut self, dt: f32) -> () {
         self.current_time += dt;
 
         if self.current_time >= self.drop_time {
@@ -55,7 +55,19 @@ impl Dropper {
                 drop.disable();
             }
         }
+    }
 
+    pub fn check_caught(&mut self, catch_rect: Rect) -> i32 {
+        let mut score = 0;
+        for drop in self.drops.iter_mut() {
+            if drop.enabled == true {
+                if drop.entity.rect.has_intersection(catch_rect) {
+                    score += 1;
+                    drop.disable()
+                }
+            }
+        }
+        score
     }
 
     pub fn render(&self, renderer: &mut Renderer) -> () {

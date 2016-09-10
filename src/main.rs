@@ -70,7 +70,8 @@ fn main() {
                           timer_subsystem.performance_frequency());
         hero.update(&input_manager, game_timer.dt);
         hero.clamp(0, GAME_WIDTH as i32);
-        dropper.update(game_timer.dt, hero.entity.rect);
+        dropper.update(game_timer.dt);
+        dropper.check_caught(hero.entity.rect);
 
         // render everything
         renderer.set_draw_color(Color::RGB(101, 156, 239));

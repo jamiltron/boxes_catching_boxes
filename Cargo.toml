@@ -6,5 +6,4 @@ authors = ["Justin Hamilton <justin@jamiltron.com>"]
 [dependencies]
 rand = "0.3.0"
 sdl2 = "0.22"
-sdl2_image = "0.22"
 sdl2_ttf = "0.22"
