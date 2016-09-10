@@ -1,5 +1,6 @@
 extern crate rand;
 extern crate sdl2;
+extern crate sdl2_mixer;
 extern crate sdl2_ttf;
 
 mod drop;
@@ -17,6 +18,8 @@ use hero::Hero;
 use input_manager::InputManager;
 use score_keeper::ScoreKeeper;
 use sdl2::pixels::Color;
+use sdl2_mixer::AUDIO_S16LSB;
+
 use std::path::Path;
 
 const GAME_WIDTH: u32 = 640;
@@ -38,22 +41,29 @@ fn main() {
     let mut event_pump = sdl_context.event_pump().unwrap();
     let mut renderer = window.renderer().present_vsync().build().unwrap();
 
+    // audio stuff
+    let _ = sdl_context.audio().unwrap();
+    let _ = sdl2_mixer::open_audio(44100, AUDIO_S16LSB, 2, 1024);
+    sdl2_mixer::allocate_channels(0);
+    let sound_effect = sdl2_mixer::Music::from_file(Path::new("res/audio/get.wav")).unwrap();
+
     // create our own manager classes
     let mut game_timer = GameTimer::new(timer_subsystem.performance_counter());
     let mut input_manager = InputManager::new();
-    let mut dropper = Dropper::new(GAME_WIDTH as i32,
-                                   GAME_HEIGHT as i32,
-                                   1000.0,
-                                   Color::RGB(255, 255, 255),
-                                   0.1);
+
+    // font rendering
     let ttf_context = sdl2_ttf::init().unwrap();
     let font = ttf_context.load_font(Path::new("res/fonts/kenpixel_mini.ttf"), 16).unwrap();
     let mut score_keeper = ScoreKeeper::new(font, Color::RGB(050, 050, 050), &renderer, GAME_WIDTH);
 
-    // font stuff
-
 
     // create our game entities
+    let mut dropper = Dropper::new(GAME_WIDTH as i32,
+                                   GAME_HEIGHT as i32,
+                                   1000.0,
+                                   Color::RGB(255, 255, 153),
+                                   0.1);
+
     let grass = Entity::new(0,
                             (GAME_HEIGHT - ENTITY_HEIGHT) as i32,
                             GAME_WIDTH,
@@ -82,6 +92,9 @@ fn main() {
         hero.clamp(0, GAME_WIDTH as i32);
         dropper.update(game_timer.dt);
         let points = dropper.check_caught(hero.entity.rect);
+        if points > 0 {
+            sound_effect.play(1).unwrap();
+        }
         score_keeper.update(points);
 
 

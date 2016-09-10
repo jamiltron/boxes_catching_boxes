@@ -7,3 +7,4 @@ authors = ["Justin Hamilton <justin@jamiltron.com>"]
 rand = "0.3.0"
 sdl2 = "0.22"
 sdl2_ttf = "0.22"
+sdl2_mixer = "0.22"
