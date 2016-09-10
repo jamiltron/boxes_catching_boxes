@@ -1,10 +1,14 @@
 extern crate sdl2;
+extern crate rand;
 
+mod drop;
+mod dropper;
 mod entity;
 mod game_timer;
 mod hero;
 mod input_manager;
 
+use dropper::Dropper;
 use entity::Entity;
 use game_timer::GameTimer;
 use hero::Hero;
@@ -33,6 +37,11 @@ fn main() {
     // create our own manager classes
     let mut game_timer = GameTimer::new(timer_subsystem.performance_counter());
     let mut input_manager = InputManager::new();
+    let mut dropper = Dropper::new(GAME_WIDTH as i32,
+                                   GAME_HEIGHT as i32,
+                                   1000.0,
+                                   Color::RGB(255, 255, 255),
+                                   0.1);
 
     // create our game entities
     let grass = Entity::new(0,
@@ -61,10 +70,12 @@ fn main() {
                           timer_subsystem.performance_frequency());
         hero.update(&input_manager, game_timer.dt);
         hero.clamp(0, GAME_WIDTH as i32);
+        dropper.update(game_timer.dt, hero.entity.rect);
 
         // render everything
         renderer.set_draw_color(Color::RGB(101, 156, 239));
         renderer.clear();
+        dropper.render(&mut renderer);
         grass.render(&mut renderer);
         hero.render(&mut renderer);
         renderer.present();

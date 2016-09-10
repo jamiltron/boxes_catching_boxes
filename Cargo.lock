@@ -2,6 +2,7 @@
 name = "boxes_catching_boxes"
 version = "0.1.0"
 dependencies = [
+ "rand 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "sdl2 0.22.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "sdl2_image 0.22.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "sdl2_ttf 0.22.0 (registry+https://github.com/rust-lang/crates.io-index)",

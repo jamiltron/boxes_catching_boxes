@@ -1,5 +1,3 @@
-extern crate sdl2;
-
 use entity::Entity;
 use input_manager::InputManager;
 use sdl2::pixels::Color;
