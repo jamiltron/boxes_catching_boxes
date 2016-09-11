@@ -57,7 +57,7 @@ impl Dropper {
         }
     }
 
-    pub fn check_caught(&mut self, catch_rect: Rect) -> i32 {
+    pub fn check_overlap(&mut self, catch_rect: Rect) -> i32 {
         let mut score = 0;
         for drop in self.drops.iter_mut() {
             if drop.enabled == true {

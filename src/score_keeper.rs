@@ -57,6 +57,14 @@ impl ScoreKeeper {
 
     pub fn update(&mut self, points: i32) -> () {
         self.score += points;
+
+        if self.score > 999999 {
+            self.score = 999999;
+        }
+
+        if self.score < 0 {
+            self.score = 0;
+        }
     }
 
     pub fn render(&mut self, renderer: &mut Renderer) -> () {

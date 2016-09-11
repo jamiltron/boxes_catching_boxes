@@ -5,6 +5,7 @@ use sdl2::keyboard::Keycode;
 pub struct InputManager {
     pub left_is_down: bool,
     pub right_is_down: bool,
+    pub mute_pressed: bool,
     pub should_quit: bool,
 }
 
@@ -13,6 +14,7 @@ impl InputManager {
         InputManager {
             left_is_down: false,
             right_is_down: false,
+            mute_pressed: false,
             should_quit: false,
         }
     }
@@ -25,6 +27,7 @@ impl InputManager {
                     self.should_quit = true;
                     return;
                 }
+                Event::KeyDown { keycode: Some(Keycode::M), .. } => self.mute_pressed = true,
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => self.left_is_down = true,
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => self.right_is_down = true,
                 Event::KeyUp { keycode: Some(Keycode::Left), .. } => self.left_is_down = false,

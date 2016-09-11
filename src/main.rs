@@ -52,10 +52,11 @@ fn main() {
     let _ = sdl_context.audio().unwrap();
     let _ = sdl2_mixer::open_audio(FREQUENCY, AUDIO_S16LSB, CHANNELS, CHUNK_SIZE);
     sdl2_mixer::allocate_channels(0);
-    let sound_effect = sdl2_mixer::Music::from_file(Path::new("res/audio/get.wav")).unwrap();
+    let catch_sound = sdl2_mixer::Music::from_file(Path::new("res/audio/get.wav")).unwrap();
+    let crash_sound = sdl2_mixer::Music::from_file(Path::new("res/audio/crash.wav")).unwrap();
 
     // create our own manager classes
-    let audio_manager = AudioManager::new(sound_effect);
+    let mut audio_manager = AudioManager::new(catch_sound, crash_sound);
     let mut game_timer = GameTimer::new(timer_subsystem.performance_counter());
     let mut input_manager = InputManager::new();
 
@@ -96,13 +97,27 @@ fn main() {
         // update everything
         game_timer.update(timer_subsystem.performance_counter(),
                           timer_subsystem.performance_frequency());
+
+        if input_manager.mute_pressed {
+            println!("toggling mute!");
+            audio_manager.toggle_mute();
+            input_manager.mute_pressed = false;
+        }
+
         hero.update(&input_manager, game_timer.dt);
         hero.clamp(0, GAME_WIDTH as i32);
         dropper.update(game_timer.dt);
-        let points = dropper.check_caught(hero.entity.rect);
-        if points > 0 {
+
+        // update score stuff
+        let catch_points = dropper.check_overlap(hero.entity.rect);
+        if catch_points > 0 {
             audio_manager.play_catch();
         }
+        let crash_points = dropper.check_overlap(grass.rect);
+        if crash_points > 0 {
+            audio_manager.play_crash();
+        }
+        let points = catch_points - crash_points;
         score_keeper.update(points);
 
 
