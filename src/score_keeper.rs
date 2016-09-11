@@ -7,6 +7,9 @@ use sdl2::render::TextureQuery;
 use sdl2::pixels::Color;
 use sdl2_ttf::Font;
 
+const MIN_SCORE: i32 = 0;
+const MAX_SCORE: i32 = 999999;
+
 pub struct ScoreKeeper {
     pub score: i32,
     old_score: i32,
@@ -58,12 +61,12 @@ impl ScoreKeeper {
     pub fn update(&mut self, points: i32) -> () {
         self.score += points;
 
-        if self.score > 999999 {
-            self.score = 999999;
+        if self.score > MAX_SCORE {
+            self.score = MAX_SCORE;
         }
 
-        if self.score < 0 {
-            self.score = 0;
+        if self.score < MIN_SCORE {
+            self.score = MIN_SCORE;
         }
     }
 
