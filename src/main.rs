@@ -3,6 +3,7 @@ extern crate sdl2;
 extern crate sdl2_mixer;
 extern crate sdl2_ttf;
 
+mod audio_manager;
 mod drop;
 mod dropper;
 mod entity;
@@ -11,6 +12,7 @@ mod hero;
 mod input_manager;
 mod score_keeper;
 
+use audio_manager::AudioManager;
 use dropper::Dropper;
 use entity::Entity;
 use game_timer::GameTimer;
@@ -19,11 +21,16 @@ use input_manager::InputManager;
 use score_keeper::ScoreKeeper;
 use sdl2::pixels::Color;
 use sdl2_mixer::AUDIO_S16LSB;
-
 use std::path::Path;
 
+const CHANNELS: isize = 2;
+const CHUNK_SIZE: isize = 1024;
+const DROP_TIME: f32 = 1000.0;
+const DROP_SPEED: f32 = 0.1;
+const FREQUENCY: isize = 44100;
 const GAME_WIDTH: u32 = 640;
 const GAME_HEIGHT: u32 = 480;
+const HERO_SPEED: f32 = 0.5;
 const ENTITY_HEIGHT: u32 = 32;
 const ENTITY_WIDTH: u32 = 32;
 
@@ -43,11 +50,12 @@ fn main() {
 
     // audio stuff
     let _ = sdl_context.audio().unwrap();
-    let _ = sdl2_mixer::open_audio(44100, AUDIO_S16LSB, 2, 1024);
+    let _ = sdl2_mixer::open_audio(FREQUENCY, AUDIO_S16LSB, CHANNELS, CHUNK_SIZE);
     sdl2_mixer::allocate_channels(0);
     let sound_effect = sdl2_mixer::Music::from_file(Path::new("res/audio/get.wav")).unwrap();
 
     // create our own manager classes
+    let audio_manager = AudioManager::new(sound_effect);
     let mut game_timer = GameTimer::new(timer_subsystem.performance_counter());
     let mut input_manager = InputManager::new();
 
@@ -60,9 +68,9 @@ fn main() {
     // create our game entities
     let mut dropper = Dropper::new(GAME_WIDTH as i32,
                                    GAME_HEIGHT as i32,
-                                   1000.0,
+                                   DROP_TIME,
                                    Color::RGB(255, 255, 153),
-                                   0.1);
+                                   DROP_SPEED);
 
     let grass = Entity::new(0,
                             (GAME_HEIGHT - ENTITY_HEIGHT) as i32,
@@ -75,7 +83,7 @@ fn main() {
                              ENTITY_WIDTH,
                              ENTITY_HEIGHT,
                              Color::RGB(255, 102, 102),
-                             0.5);
+                             HERO_SPEED);
 
     // main game loop
     'running: loop {
@@ -93,7 +101,7 @@ fn main() {
         dropper.update(game_timer.dt);
         let points = dropper.check_caught(hero.entity.rect);
         if points > 0 {
-            sound_effect.play(1).unwrap();
+            audio_manager.play_catch();
         }
         score_keeper.update(points);
 
