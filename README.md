@@ -1,6 +1,6 @@
 # BOXES CATCHING BOXES
 
-You are a box. Fullfill your dream of catching other boxes, for some reason...
+You are a box. Fulfill your dream of catching other boxes, for some reason...
 
 ## How to run
 
@@ -14,7 +14,7 @@ Once you have all of this setup give `cargo run` in the root directory a whirl. 
 
 ## Instructions
 
-Use left and right to move your box, touch the falling boxes to catch them. Press Escape to quit when you have sufficiently filled said dreams.
+Use left and right to move your box, touch the falling boxes to catch them. Press M to mute audio. Press Escape to quit when you have sufficiently filled said dreams.
 
 ## Purpose
 
