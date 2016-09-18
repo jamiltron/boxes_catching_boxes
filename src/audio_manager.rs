@@ -9,7 +9,7 @@ pub struct AudioManager {
 }
 
 impl AudioManager {
-    pub fn new(catch_sound: Music, crash_sound: Music) -> AudioManager {
+    pub fn new(catch_sound: Music, crash_sound: Music) -> Self {
         AudioManager {
             catch_sound: catch_sound,
             crash_sound: crash_sound,

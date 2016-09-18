@@ -9,7 +9,7 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn new(x: i32, y: i32, width: u32, height: u32, color: Color) -> Entity {
+    pub fn new(x: i32, y: i32, width: u32, height: u32, color: Color) -> Self {
         Entity {
             rect: Rect::new(x, y, width, height),
             color: color,

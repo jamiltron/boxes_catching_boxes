@@ -41,7 +41,7 @@ impl ScoreKeeper {
                   height)
     }
 
-    pub fn new(font: Font, text_color: Color, renderer: &Renderer, game_width: u32) -> ScoreKeeper {
+    pub fn new(font: Font, text_color: Color, renderer: &Renderer, game_width: u32) -> Self {
         let text = format!("Score: {:06}", 0);
         let font_texture = ScoreKeeper::create_font_texture(&font, text_color, text, renderer);
         let font_target = ScoreKeeper::create_font_target(game_width, &font_texture);

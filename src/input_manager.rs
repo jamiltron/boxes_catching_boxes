@@ -10,7 +10,7 @@ pub struct InputManager {
 }
 
 impl InputManager {
-    pub fn new() -> InputManager {
+    pub fn new() -> Self {
         InputManager {
             left_is_down: false,
             right_is_down: false,

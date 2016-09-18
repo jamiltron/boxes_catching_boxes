@@ -9,7 +9,7 @@ pub struct Hero {
 }
 
 impl Hero {
-    pub fn new(x: i32, y: i32, width: u32, height: u32, color: Color, move_speed: f32) -> Hero {
+    pub fn new(x: i32, y: i32, width: u32, height: u32, color: Color, move_speed: f32) -> Self {
         Hero {
             entity: Entity::new(x, y, width, height, color),
             move_speed: move_speed,
