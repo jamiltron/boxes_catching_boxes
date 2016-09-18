@@ -35,7 +35,6 @@ const ENTITY_HEIGHT: u32 = 32;
 const ENTITY_WIDTH: u32 = 32;
 
 fn main() {
-
     // create the various subsystems and contexts, etc.
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
@@ -57,7 +56,7 @@ fn main() {
 
     // create our own manager classes
     let mut audio_manager = AudioManager::new(catch_sound, crash_sound);
-    let mut game_timer = GameTimer::new(timer_subsystem.performance_counter());
+    let mut game_timer = GameTimer::new(timer_subsystem.performance_counter(), 1.0 / 60.0 * 1000.0);
     let mut input_manager = InputManager::new();
 
     // font rendering
@@ -99,26 +98,29 @@ fn main() {
                           timer_subsystem.performance_frequency());
 
         if input_manager.mute_pressed {
-            println!("toggling mute!");
             audio_manager.toggle_mute();
             input_manager.mute_pressed = false;
         }
 
-        hero.update(&input_manager, game_timer.dt);
-        hero.clamp(0, GAME_WIDTH as i32);
-        dropper.update(game_timer.dt);
+        while game_timer.should_update_physics() {
+            hero.update(&input_manager, game_timer.dt);
+            hero.clamp(0, GAME_WIDTH as i32);
+            dropper.update(game_timer.dt);
 
-        // update score stuff
-        let catch_points = dropper.check_overlap(hero.entity.rect);
-        if catch_points > 0 {
-            audio_manager.play_catch();
+            // update score stuff
+            let catch_points = dropper.check_overlap(hero.entity.rect);
+            if catch_points > 0 {
+                audio_manager.play_catch();
+            }
+            let crash_points = dropper.check_overlap(grass.rect);
+            if crash_points > 0 {
+                audio_manager.play_crash();
+            }
+            let points = catch_points - crash_points;
+            score_keeper.update(points);
+
+            game_timer.decrement();
         }
-        let crash_points = dropper.check_overlap(grass.rect);
-        if crash_points > 0 {
-            audio_manager.play_crash();
-        }
-        let points = catch_points - crash_points;
-        score_keeper.update(points);
 
 
         // render everything
