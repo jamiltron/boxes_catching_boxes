@@ -5,15 +5,15 @@ use sdl2::pixels::Color;
 use sdl2::render::Renderer;
 
 #[derive(Copy, Clone)]
-pub struct Drop {
+pub struct Pickup {
     pub entity: Entity,
     pub drop_speed: f32,
     pub enabled: bool,
 }
 
-impl Drop {
-    pub fn new(width: u32, height: u32, color: Color, drop_speed: f32) -> Drop {
-        Drop {
+impl Pickup {
+    pub fn new(width: u32, height: u32, color: Color, drop_speed: f32) -> Self {
+        Pickup {
             entity: Entity::new(0, 0, width, height, color),
             drop_speed: drop_speed,
             enabled: false,

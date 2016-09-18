@@ -4,20 +4,20 @@ extern crate sdl2_mixer;
 extern crate sdl2_ttf;
 
 mod audio_manager;
-mod drop;
-mod dropper;
 mod entity;
 mod game_timer;
 mod hero;
 mod input_manager;
+mod pickup;
+mod pickup_spawner;
 mod score_keeper;
 
 use audio_manager::AudioManager;
-use dropper::Dropper;
 use entity::Entity;
 use game_timer::GameTimer;
 use hero::Hero;
 use input_manager::InputManager;
+use pickup_spawner::PickupSpawner;
 use score_keeper::ScoreKeeper;
 use sdl2::pixels::Color;
 use sdl2_mixer::AUDIO_S16LSB;
@@ -66,11 +66,11 @@ fn main() {
 
 
     // create our game entities
-    let mut dropper = Dropper::new(GAME_WIDTH as i32,
-                                   GAME_HEIGHT as i32,
-                                   DROP_TIME,
-                                   Color::RGB(255, 255, 153),
-                                   DROP_SPEED);
+    let mut pickup_spawner = PickupSpawner::new(GAME_WIDTH as i32,
+                                                GAME_HEIGHT as i32,
+                                                DROP_TIME,
+                                                Color::RGB(255, 255, 153),
+                                                DROP_SPEED);
 
     let grass = Entity::new(0,
                             (GAME_HEIGHT - ENTITY_HEIGHT) as i32,
@@ -105,14 +105,14 @@ fn main() {
         while game_timer.should_update_physics() {
             hero.update(&input_manager, game_timer.dt);
             hero.clamp(0, GAME_WIDTH as i32);
-            dropper.update(game_timer.dt);
+            pickup_spawner.update(game_timer.dt);
 
             // update score stuff
-            let catch_points = dropper.check_overlap(hero.entity.rect);
+            let catch_points = pickup_spawner.check_overlap(hero.entity.rect);
             if catch_points > 0 {
                 audio_manager.play_catch();
             }
-            let crash_points = dropper.check_overlap(grass.rect);
+            let crash_points = pickup_spawner.check_overlap(grass.rect);
             if crash_points > 0 {
                 audio_manager.play_crash();
             }
@@ -122,11 +122,10 @@ fn main() {
             game_timer.decrement();
         }
 
-
         // render everything
         renderer.set_draw_color(Color::RGB(101, 156, 239));
         renderer.clear();
-        dropper.render(&mut renderer);
+        pickup_spawner.render(&mut renderer);
         grass.render(&mut renderer);
         hero.render(&mut renderer);
         score_keeper.render(&mut renderer);
